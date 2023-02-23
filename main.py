@@ -61,23 +61,36 @@ class pyAMZON():
         # time.sleep(1000)
         self.b.get('https://www.amazon.com/gp/your-account/order-history/')
 
-        t = 3
-        while t > 0:
-            # print(t)
-            try:
-                emailField = self.b.find_element_by_css_selector('input[name=email]')
-                emailField.send_keys(self.passwords["email"])
-                self.b.find_element_by_css_selector('input[type=submit]').click()
 
-                passwordField = self.b.find_element_by_css_selector('input[name=password]')
-                passwordField.send_keys(self.passwords["password"])
-                self.b.find_element_by_css_selector('input[type=submit]').click()
-                t = -666
-            except:
-                t -= 1
-                time.sleep(1)
+        print('entering email...')
+        emailField = self.b.find_element_by_css_selector('input[name=email]')
+        emailField.send_keys(self.passwords["email"])
+        self.b.find_element_by_css_selector('input[type=submit]').click()
 
-        print("done signing in")
+        print('entering password...')
+        passwordField = self.b.find_element_by_css_selector('input[name=password]')
+        passwordField.send_keys(self.passwords["password"])
+        self.b.find_element_by_css_selector('input[type=submit]').click()
+
+
+        captcha = False
+        try: 
+            captcha = self.b.find_element_by_css_selector('input[name=guess]')
+        except:
+            pass
+
+        # print('captcha', captcha)
+        
+        print()
+        if captcha == False:
+            print("done signing in")
+        else:
+            print('😖😖😖')
+            print('sign in failed, due to captcha')
+            print('1️⃣','pass captcha')
+            print('2️⃣' ,'then press enter to continue')
+            x = input('') # this will pause until the user passes captcha
+            print('...starting back up')
 
         self.wait(3)
 
@@ -89,7 +102,7 @@ class pyAMZON():
         order_urls = []
 
         order_cards = self.b.find_elements_by_class_name('js-order-card')
-        print('number or orders: ',len(order_cards))
+        # print('number or orders: ',len(order_cards))
 
         order_card_loop = True
         while order_card_loop:
@@ -109,7 +122,7 @@ class pyAMZON():
                 order_card_loop = False
 
 
-        print('number or order urls',len(order_urls))
+        print('number of order urls',len(order_urls))
         for iurl,url in enumerate(order_urls):
             try:
                 print('{0} / {1}'.format(iurl+1,len(order_urls)),end='\r')
@@ -169,9 +182,15 @@ class pyAMZON():
         
         df = pd.DataFrame(result)
 
-        # df['qty'] = pd.to_numeric(df['qty'],errors='ignore')
-        # df['price'] = pd.to_numeric(df['price'],errors='ignore')
-        # df['total'] = df['qty'] * df['price']
+        #removes the $ , and spaces
+        df['price'] = df['price'].apply(self.clean_price_string)
+
+        df['price'] = df['price'].astype(float,errors='ignore')
+        df['qty'] = df['qty'].astype(float,errors='ignore')
+
+
+        # print(df.dtypes)
+        df['total'] = df['qty'] * df['price']
 
         outputfile = os.path.join(self.DIR,'results_{0}.csv'.format(self.year))
         df.to_csv(outputfile,index=False)
@@ -180,6 +199,10 @@ class pyAMZON():
 
 
         time.sleep(1*60)
+
+    def clean_price_string(self,s):
+        # print('\'' + s + '\'')
+        return re.sub('(\$|,| )','',s)
 
 
     def get_browser(self,visible= True):
