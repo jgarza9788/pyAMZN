@@ -121,8 +121,16 @@ class pyAMZON():
             except:
                 order_card_loop = False
 
+        # for iurl,url in enumerate(order_urls):
+        #     print(iurl,url)
+
+        order_urls = list(set(order_urls))
+
+        # for iurl,url in enumerate(order_urls):
+        #     print(iurl,url)
 
         print('number of order urls',len(order_urls))
+
         for iurl,url in enumerate(order_urls):
             try:
                 print('{0} / {1}'.format(iurl+1,len(order_urls)),end='\r')
