@@ -3,8 +3,13 @@ import os, re, time
 import json5 as json
 import pandas as pd
 from datetime  import datetime
-from seleniumwire import webdriver 
 import selenium.common.exceptions as seleniumex
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.chrome.options import Options
+
 
 def ask(prompt, datatype):
     '''
@@ -45,13 +50,12 @@ class pyAMZON():
             # self.year = 2022
             self.get_data()
 
-            
+        input()
 
     def wait(self,t=1):
         for i in range(t):
             print('{0}/{1}'.format(i+1,t),end='\r')
             time.sleep(1)
-
 
     def get_data(self):
 
@@ -61,21 +65,25 @@ class pyAMZON():
         # time.sleep(1000)
         self.b.get('https://www.amazon.com/gp/your-account/order-history/')
 
+        try:
+            print('entering email...')
+            emailField = self.b.find_element(By.CSS_SELECTOR,'input[name=email]')
+            emailField.send_keys(self.passwords["email"])
+            self.b.find_element(By.CSS_SELECTOR,'input[type=submit]').click()
+        except Exception as ex:
+            print(ex)
 
-        print('entering email...')
-        emailField = self.b.find_element_by_css_selector('input[name=email]')
-        emailField.send_keys(self.passwords["email"])
-        self.b.find_element_by_css_selector('input[type=submit]').click()
-
-        print('entering password...')
-        passwordField = self.b.find_element_by_css_selector('input[name=password]')
-        passwordField.send_keys(self.passwords["password"])
-        self.b.find_element_by_css_selector('input[type=submit]').click()
-
+        try:
+            print('entering password...')
+            passwordField = self.b.find_element(By.CSS_SELECTOR,'input[name=password]')
+            passwordField.send_keys(self.passwords["password"])
+            self.b.find_element(By.CSS_SELECTOR,'input[type=submit]').click()
+        except Exception as ex:
+            print(ex)
 
         captcha = False
         try: 
-            captcha = self.b.find_element_by_css_selector('input[name=guess]')
+            captcha = self.b.find_element(By.CSS_SELECTOR,'input[name=guess]')
         except:
             pass
 
@@ -101,7 +109,7 @@ class pyAMZON():
 
         order_urls = []
 
-        order_cards = self.b.find_elements_by_class_name('js-order-card')
+        order_cards = self.b.find_elements(By.CLASS_NAME,'js-order-card')
         # print('number or orders: ',len(order_cards))
 
         order_card_loop = True
@@ -111,13 +119,13 @@ class pyAMZON():
                 order_card_loop = False
 
             for oc in order_cards:
-                order_urls.append(oc.find_elements_by_class_name('a-link-normal')[0].get_attribute("href"))
+                order_urls.append(oc.find_elements(By.CLASS_NAME,'a-link-normal')[0].get_attribute("href"))
 
             try:
-                next_button = self.b.find_element_by_class_name('a-last')
+                next_button = self.b.find_element(By.CLASS_NAME,'a-last')
                 next_button.click()
 
-                order_cards = self.b.find_elements_by_class_name('js-order-card')
+                order_cards = self.b.find_elements(By.CLASS_NAME,'js-order-card')
             except:
                 order_card_loop = False
 
@@ -136,11 +144,11 @@ class pyAMZON():
                 print('{0} / {1}'.format(iurl+1,len(order_urls)),end='\r')
                 self.b.get(url)
 
-                shipments = self.b.find_elements_by_class_name('shipment')
+                shipments = self.b.find_elements(By.CLASS_NAME,'shipment')
 
                 for s in shipments:
-                    item = s.find_element_by_class_name('yohtmlc-item')
-                    item_rows = item.find_elements_by_class_name('a-row')
+                    item = s.find_element(By.CLASS_NAME,'yohtmlc-item')
+                    item_rows = item.find_elements(By.CLASS_NAME,'a-row')
 
                     result_row = {}
                     result_row['url'] = url
@@ -149,7 +157,7 @@ class pyAMZON():
                     result_row['price'] = None
 
                     try:
-                        result_row['qty'] = s.find_element_by_class_name('item-view-qty').get_attribute("innerText").strip() 
+                        result_row['qty'] = s.find_element(By.CLASS_NAME,'item-view-qty').get_attribute("innerText").strip() 
                     except:
                         pass
 
@@ -164,17 +172,17 @@ class pyAMZON():
             
             except seleniumex.NoSuchElementException as nseex: # it's not a shipment... maybe it's a delivery
 
-                deliveryItems = self.b.find_elements_by_class_name('deliveryItem')
+                deliveryItems = self.b.find_elements(By.CLASS_NAME,'deliveryItem')
                 for di in deliveryItems:
                     result_row = {}
                     result_row['url'] = url
                     
 
-                    temp = di.find_element_by_class_name('deliveryItem-details')
-                    temp = temp.find_element_by_class_name('a-link-normal')
+                    temp = di.find_element(By.CLASS_NAME,'deliveryItem-details')
+                    temp = temp.find_element(By.CLASS_NAME,'a-link-normal')
                     result_row['item_name'] = temp.get_attribute("innerText").strip()
                     result_row['qty'] = 1
-                    result_row['price'] = di.find_element_by_class_name('deliveryItem-price').get_attribute("innerText").strip() 
+                    result_row['price'] = di.find_element(By.CLASS_NAME,'deliveryItem-price').get_attribute("innerText").strip() 
 
                     result.append(result_row)
 
@@ -212,25 +220,30 @@ class pyAMZON():
         # print('\'' + s + '\'')
         return re.sub('(\$|,| )','',s)
 
-
     def get_browser(self,visible= True):
-        #options
-        options = webdriver.ChromeOptions()
-        options.add_argument('test-type')
-        options.add_argument('--js-flags=--expose-gc')
-        options.add_argument('--enable-precise-memory-info')
-        options.add_argument('--disable-popups-blocking')
-        options.add_argument('--disable-default-apps')
-        options.add_argument('test-type=browser')
-        options.add_argument('disable-infobars')
-        options.add_argument('window-size=800x600')
-        options.add_argument('log-level=3')
-        # options.add_argument("user-data-dir=C:\\Users\\JGarza\\AppData\\Local\\Google\\Chrome\\User Data\\Default") 
+        # #options
+        # options = webdriver.ChromeOptions()
+        # options.add_argument('test-type')
+        # options.add_argument('--js-flags=--expose-gc')
+        # options.add_argument('--enable-precise-memory-info')
+        # options.add_argument('--disable-popups-blocking')
+        # options.add_argument('--disable-default-apps')
+        # options.add_argument('test-type=browser')
+        # options.add_argument('disable-infobars')
+        # options.add_argument('window-size=800x600')
+        # options.add_argument('log-level=3')
+
+        chrome_options = Options()
+        
+        chrome_options.add_argument("--no-sandbox")
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        # # options.add_argument("user-data-dir=C:\\Users\\JGarza\\AppData\\Local\\Google\\Chrome\\User Data\\Default") 
 
         if visible == False:
-            options.add_argument('headless')
-        
-        return webdriver.Chrome(executable_path=os.path.join(self.DIR,'chromedriver.exe'),options=options)
+            chrome_options.add_argument("--headless")  # Run Chrome in headless mode
+
+        service = Service(executable_path=os.path.join(self.DIR,'chromedriver.exe'))
+        return webdriver.Chrome(service =service,options=chrome_options)
 
     def load(self, filepath):
         with open(filepath,'r') as file:
@@ -244,5 +257,6 @@ class pyAMZON():
 if __name__ == "__main__":
     
     pAZ = pyAMZON()
+    
 
 
