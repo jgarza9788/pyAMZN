@@ -118,11 +118,11 @@ class pyAMZON():
         count_il = -1 
 
         order_infos = self.b.find_elements(By.CLASS_NAME,'order-info')
-        print('number or orders: ',len(order_infos))
+        # print('number or orders: ',len(order_infos))
 
         order_card_loop = True
         while order_card_loop:
-            print(len(invoice_links),count_il)
+            # print(len(invoice_links),count_il)
 
             for oi in order_infos:
                 # print("oi",oi)
