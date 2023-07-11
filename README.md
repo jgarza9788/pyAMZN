@@ -1,6 +1,7 @@
 # pyAMZN
 This will obtain a list of all your Amazon purchases (within a given year) and save it as a csv.
 
+**this doesn't work any more after an update**
 
 # links
 [Buy Me ☕](https://www.buymeacoffee.com/jgarza97885)   
