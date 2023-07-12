@@ -14,28 +14,51 @@ from bs4 import BeautifulSoup
 
 def ask(prompt, datatype):
     '''
-    '''
+    Prompts the user for input and returns the input value of the specified datatype.
 
+    Args:
+        prompt (str): The prompt to display to the user.
+        datatype (type): The expected datatype of the input.
+
+    Returns:
+        The input value of the specified datatype.
+
+    Raises:
+        TypeError: If `datatype` is not a valid Python type.
+        ValueError: If the input value does not match the specified datatype.
+
+    Example:
+        >>> name = ask("Enter your name:", str)
+        Enter your name:
+        John Doe
+        >>> print(name)
+        John Doe
+    '''
+    
     prompt = str(prompt)
 
-    if isinstance(datatype,type) == False:
-        raise ValueError('datatype should be a type (i.e. str, int, float, etc)')
+    if not isinstance(datatype, type):
+        raise TypeError('datatype should be a type (i.e. str, int, float, etc)')
 
     done = False
-    while done == False:
+    while not done:
         try:
             if datatype != list:
-                i = datatype(input( prompt + '\n'))
+                i = datatype(input(prompt + '\n'))
                 return i
             else:
-                i = input( prompt + '? \n')
+                i = input(prompt + '? \n')
                 i = i.split(',')
                 if len(i) == 0:
                     return []
                 else:
                     return i
-        except:
+        except ValueError:
             print('***ERROR*** it should be a ' + datatype.__name__ + ', try again')
+        except TypeError:
+            print('***ERROR*** it should be a ' + datatype.__name__ + ', try again')
+        except Exception:
+            print('***ERROR*** An unexpected error occurred, please try again')
 
 
 class pyAMZON():
