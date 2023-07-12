@@ -1,4 +1,4 @@
+beautifulsoup4==4.12.2
 json5==0.9.8
 pandas==1.4.3
-selenium==3.141.0
-selenium_wire==3.0.6
+selenium==4.10.0
