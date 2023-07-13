@@ -34,7 +34,7 @@ def ask(prompt, datatype):
         >>> print(name)
         John Doe
     '''
-    
+
     prompt = str(prompt)
 
     if not isinstance(datatype, type):
@@ -202,6 +202,8 @@ class pyAMZON():
         outputfile = os.path.join(self.DIR,'results_{0}.csv'.format(self.year))
         pd.DataFrame(item_list).to_csv(outputfile,index=False)
         print('saved: ', outputfile)
+
+        self.b.quit()
 
     def clean_price_string(self,s):
         # print('\'' + s + '\'')
