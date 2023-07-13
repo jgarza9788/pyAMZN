@@ -20,14 +20,14 @@ This will obtain a list of all your Amazon purchases (within a given year) and s
 # setup & run
 1. get/install the requirements listed above.
 2. run `pip install -r requirements.txt`
-   1. this will install some python libs
+    * this will install some python libs
 3. edit the `passwords_example.json` with your email and password.
 4. rename `passwords_example.json` to `passwords.json`
 5. run main.py (i.e. `py main.py` , or `python main.py`)
-  * you can also right click the main.py file, and open with Python.
-  * ![openwithpython](./misc/openwithpython.png)
+    * you can also right click the main.py file, and open with Python.
+    * ![openwithpython](./misc/openwithpython.png)
 6. pass captcha (if needed)
-  * you might need to pass the captcha manually and then resume the code.
+    * you might need to pass the captcha manually and then resume the code.
 7. the program will take a while, but when it's done it will save a .csv file within the root directory.
 
 
