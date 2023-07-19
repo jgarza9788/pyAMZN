@@ -1,47 +1,49 @@
 # pyAMZN
-This will obtain a list of all your Amazon purchases (within a given year) and save it as a csv.
 
-# links
-[Buy Me ☕](https://www.buymeacoffee.com/jgarza97885)   
-[youtube ▶](https://youtu.be/1BCBll0lsiM)  
-~~[youtube tutorial for noobs ▶️]()~~
-> note: tell noobs to `git gud`
+pyAMZN is a tool that helps you retrieve a list of all your Amazon purchases for a given year and saves it as a CSV file.
 
-# requirements
-* python 3.0 or later
-  * for help google "How to install Python"
-  * or use ChatGPT or Bard
-* chrome
-* [selenium chrome driver](https://chromedriver.chromium.org/downloads) 
-  * that matches the version of chrome
-  * note: their is already one in the root directory, but it might not match your chrome version.
-* an amazon account
+## Useful Links
 
-# setup & run
-1. get/install the requirements listed above.
-2. run `pip install -r requirements.txt`
-    * this will install some python libs
-3. edit the `passwords_example.json` with your email and password.
-4. rename `passwords_example.json` to `passwords.json`
-5. run main.py (i.e. `py main.py` , or `python main.py`)
-    * you can also right click the main.py file, and open with Python.
-    * ![openwithpython](./misc/openwithpython.png)
-6. pass captcha (if needed)
-    * you might need to pass the captcha manually and then resume the code.
-7. the program will take a while, but when it's done it will save a .csv file within the root directory.
+- If you find this project helpful, consider buying me a coffee: [Buy Me ☕](https://www.buymeacoffee.com/jgarza97885)
+- Watch a video tutorial on how to use pyAMZN: [YouTube Tutorial ▶](https://youtu.be/1BCBll0lsiM)
+- (Note: There's a planned tutorial for beginners that is not available yet)
 
+> Note: Don't worry if you're new to programming, just keep practicing and you'll improve!
 
-# FAQs
-## captcha
-if captch blocks during login the program will wait, and you'll have to pass captcha manually.   
-Once you pass captcha, go to the program in the terminal and hit enter.  
-the program will resume.  
+## Requirements
 
-## selenium chrome driver
-this allows your code to work with chrome, and therefore the version numbers should match.
-please make sure the chromedriver.exe is in the root directory.
+Before getting started, make sure you have the following:
 
+- Python 3.0 or later installed. If you need help with the installation, you can search "How to install Python" on Google or ask for assistance from ChatGPT or Bard.
+- Google Chrome web browser.
+- Selenium Chrome Driver that matches your version of Chrome. You can download it from [here](https://chromedriver.chromium.org/downloads). (Note: There's already a driver file in the root directory, but it might not match your Chrome version.)
+- An Amazon account.
 
-# todo  
-[] add logging support
-[] make a UI (low priority)
+## Setup and Execution
+
+Follow these steps to set up and run pyAMZN:
+
+1. Install the requirements mentioned above.
+2. Run the command `pip install -r requirements.txt` to install some necessary Python libraries.
+3. Edit the `passwords_example.json` file and replace the placeholder email and password with your own Amazon account credentials.
+4. Rename the `passwords_example.json` file to `passwords.json`.
+5. Run the `main.py` file. You can do this by opening a terminal, navigating to the project's directory, and running `py main.py` or `python main.py`. Alternatively, you can right-click the `main.py` file and select "Open with Python" from the context menu. (You can refer to the screenshot in the repository for clarification.)
+6. If a CAPTCHA appears during the login process, you will need to solve it manually. After passing the CAPTCHA, return to the terminal window and press Enter to resume the program.
+7. The program will take some time to complete, but once finished, it will save a CSV file in the root directory containing your Amazon purchase history.
+
+## Frequently Asked Questions (FAQs)
+
+### What should I do if I encounter a CAPTCHA?
+
+If a CAPTCHA appears during the login process, the program will pause and wait for you to solve it manually. Once you have passed the CAPTCHA, go back to the terminal window and press Enter to allow the program to continue.
+
+### How important is the Selenium Chrome Driver?
+
+The Selenium Chrome Driver is essential for pyAMZN to interact with the Chrome browser. Make sure the version of the driver matches your installed version of Chrome. Please ensure that the `chromedriver.exe` file is located in the root directory of the project.
+
+## To-Do List
+
+Here are some planned improvements for the project:
+
+- [ ] Add logging support.
+- [ ] Develop a user interface (UI) for easier interaction (low priority).
