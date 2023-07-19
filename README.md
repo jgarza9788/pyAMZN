@@ -41,6 +41,24 @@ If a CAPTCHA appears during the login process, the program will pause and wait f
 
 The Selenium Chrome Driver is essential for pyAMZN to interact with the Chrome browser. Make sure the version of the driver matches your installed version of Chrome. Please ensure that the `chromedriver.exe` file is located in the root directory of the project.
 
+## Troubleshooting
+
+If you encounter any issues while using pyAMZN, here are some common problems and their potential solutions:
+
+- **Problem: Chrome version mismatch**  
+  If you're experiencing compatibility issues with the Selenium Chrome Driver, it's likely due to a version mismatch between your installed Chrome browser and the driver. Make sure to download and use the appropriate version of the driver that matches your Chrome version.
+
+- **Problem: Missing dependencies**  
+  If you encounter import errors or other dependency-related issues, ensure that you have installed all the necessary Python libraries listed in the `requirements.txt` file. You can use the command `pip install -r requirements.txt` to install them automatically.
+
+- **Problem: Captcha loop**  
+  In rare cases, you might get stuck in a loop where the program keeps encountering CAPTCHAs during login. If this happens, try the following steps:
+  1. Ensure you are providing the correct Amazon account credentials in the `passwords.json` file.
+  2. Double-check your internet connection and try again.
+  3. If the issue persists, consider temporarily disabling any VPN or proxy settings that might interfere with the login process.
+
+If you still encounter problems that are not covered here, feel free to open an issue in the GitHub repository or seek help from the project's community.
+
 ## To-Do List
 
 Here are some planned improvements for the project:
