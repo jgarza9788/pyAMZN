@@ -61,6 +61,11 @@ def ask(prompt, datatype):
             print('***ERROR*** An unexpected error occurred, please try again')
 
 
+def bar(num,denom,length=50,fillchar='#',emptychar=' '):
+    fillnum = ((int)( (num/denom) * length))
+    return '[' + ( fillnum * fillchar ).ljust(length,emptychar)  + ']'
+
+
 class pyAMZON():
 
     def __init__(self,mute=False,invisible=True):
@@ -73,8 +78,6 @@ class pyAMZON():
             self.year = ask("what year should we get?",int)
             # self.year = 2022
             self.get_data()
-
-        
 
     def wait(self,t=1):
         for i in range(t):
@@ -138,6 +141,7 @@ class pyAMZON():
         self.wait(3)
 
         invoice_links = []
+        order_detail_links = []
         count_il = -1 
 
         order_infos = self.b.find_elements(By.CLASS_NAME,'order-info')
@@ -160,6 +164,10 @@ class pyAMZON():
                             if uliurl not in invoice_links:
                                 # print('+1')
                                 invoice_links.append(uliurl)
+                        elif 'order-details' in uliurl:
+                            if uliurl not in order_detail_links:
+                                order_detail_links.append(uliurl)
+
                     except:
                         pass
 
@@ -175,12 +183,42 @@ class pyAMZON():
                 order_card_loop = False
             
             count_il = len(invoice_links)
-                
 
-        # print(*invoice_links,sep='\n')
+        #name links and category list    
+        nlc_list = []
+
+        for index,odl in enumerate(order_detail_links):
+            print(bar(index+1,len(order_detail_links)),end='\r')
+            self.b.get(odl)
+            items = self.b.find_elements(By.CLASS_NAME,'yohtmlc-item')
+            for i in items:
+                a_link = i.find_element(By.TAG_NAME,'a')
+                name = a_link.get_attribute('innerText')
+                link = a_link.get_attribute('href')
+                # print(name,link,'\n')
+                nlc_list.append(
+                    {
+                        'name': name,
+                        'link': link
+                    }
+                )
+        
+        for index,nlc in enumerate(nlc_list):
+            print(bar(index+1,len(nlc_list)),end='\r')
+            try:
+                self.b.get(nlc['link'])
+                bc = self.b.find_element(By.ID,'wayfinding-breadcrumbs_feature_div')
+                nlc['category'] = bc.find_elements(By.CLASS_NAME,'a-link-normal')[0].get_attribute('innerText')
+            except Exception as ex:
+                print(ex)
+                pass
+            
+
+        # print(*nlc_list,sep='\n')
 
         item_list = []
-        for i in invoice_links:
+        for index,i in enumerate(invoice_links):
+            print(bar(index+1,len(invoice_links)),end='\r')
             self.b.get(i)
             body = self.b.find_element(By.TAG_NAME,'body')
 
@@ -193,7 +231,14 @@ class pyAMZON():
                     if len(tds) == 2:
                         item_name = tds[0].find('i').text.strip()
                         price = tds[1].text.strip()
-                        item_list.append({'invoice': i,'name': item_name, 'price': price})
+
+                        category = '???'
+
+                        for nlc in nlc_list:
+                            if nlc['name'] == item_name:
+                                category = nlc['category']
+
+                        item_list.append({'invoice': i,'name': item_name, 'category': category, 'price': price})
                 except:
                     pass
 
