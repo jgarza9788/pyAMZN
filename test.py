@@ -1,2 +1,0 @@
-# https://scikit-learn.org/stable/auto_examples/cluster/plot_digits_agglomeration.html#sphx-glr-auto-examples-cluster-plot-digits-agglomeration-py
-# https://scikit-learn.org/stable/auto_examples/datasets/plot_iris_dataset.html
