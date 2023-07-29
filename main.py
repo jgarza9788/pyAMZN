@@ -1,6 +1,9 @@
 import sys
 import os, re, time
 import json5 as json
+import logging 
+from logging import Logger
+from logging.handlers import RotatingFileHandler
 import pandas as pd
 from datetime  import datetime
 import selenium.common.exceptions as seleniumex
@@ -60,11 +63,9 @@ def ask(prompt, datatype):
         except Exception:
             print('***ERROR*** An unexpected error occurred, please try again')
 
-
 def bar(num,denom,length=50,fillchar='#',emptychar=' '):
     fillnum = ((int)( (num/denom) * length))
     return '[' + ( fillnum * fillchar ).ljust(length,emptychar)  + ']'
-
 
 class pyAMZON():
 
@@ -72,11 +73,29 @@ class pyAMZON():
         self.DIR = os.path.dirname(os.path.realpath(__file__))
         self.passwords = self.load(os.path.join(self.DIR,'passwords.json'))
 
+        # log
+        log_name_time = datetime.now().strftime('%Y%m%d%H%M')
+        self.log = logging.getLogger(name=log_name_time + '.log')
+        self.log.setLevel(logging.DEBUG)
+        self.log.dir = self.DIR
+        self.log.filename = os.path.join(self.DIR, 'log')
+        fh = RotatingFileHandler(filename=self.log.filename,encoding='utf-8',maxBytes=25*1024*1024,backupCount=10)
+        fh.setLevel(logging.DEBUG)
+        formatter = logging.Formatter(
+            '%(asctime)s - %(levelname)s - %(filename)s - %(module)s - %(funcName)s - %(lineno)d - %(message)s',
+            )
+        fh.setFormatter(formatter)
+        self.log.addHandler(fh)
+
+
+        self.log.info('started script')
+
         print("This will obtain a list of all your Amazon purchases and save it as a csv.")
 
         while True:
             self.year = ask("what year should we get?",int)
             # self.year = 2022
+            self.log.info(f'Year {self.year}')
             self.get_data()
 
     def wait(self,t=1):
@@ -85,6 +104,7 @@ class pyAMZON():
             time.sleep(1)
 
     def get_data(self):
+        self.log.info('getting data')
 
         result = []
 
@@ -94,19 +114,23 @@ class pyAMZON():
 
         try:
             print('entering email...')
+            self.log.info('entering email...')
             emailField = self.b.find_element(By.CSS_SELECTOR,'input[name=email]')
             emailField.send_keys(self.passwords["email"])
             self.b.find_element(By.CSS_SELECTOR,'input[type=submit]').click()
         except Exception as ex:
             print(ex)
+            self.log.error(ex)
 
         try:
             print('entering password...')
+            self.log.info('entering password...')
             passwordField = self.b.find_element(By.CSS_SELECTOR,'input[name=password]')
             passwordField.send_keys(self.passwords["password"])
             self.b.find_element(By.CSS_SELECTOR,'input[type=submit]').click()
         except Exception as ex:
             print(ex)
+            self.log.error(ex)
 
         captcha = False
         try: 
@@ -125,13 +149,17 @@ class pyAMZON():
         print()
         if captcha == False:
             print("done signing in")
+            self.log.info('sign in complete')
         else:
+            self.log.warn('triggered Captcha')
             print('😖😖😖')
             print('sign in failed, due to captcha')
             print('1️⃣','pass captcha')
             print('2️⃣' ,'then press enter to continue')
             input('') # this will pause until the user passes captcha
             print('...starting back up')
+
+        self.log.info('captcha passed... thanks')
 
         self.wait(3)
         
@@ -144,25 +172,19 @@ class pyAMZON():
         order_detail_links = []
         count_il = -1 
 
+
+        self.log.info('collecting order info')
         order_infos = self.b.find_elements(By.CLASS_NAME,'order-info')
-        # print('number or orders: ',len(order_infos))
 
         order_card_loop = True
         while order_card_loop:
-            # print(len(invoice_links),count_il)
 
             for oi in order_infos:
-                # print("oi",oi)
-
                 for uli in oi.find_elements(By.CLASS_NAME,'a-link-normal'):
-                    # print("uli",uli)
-                    # print(uli.get_attribute("innerHTML"))
                     uliurl = uli.get_attribute('href')
-                    # print(uliurl)
                     try:
                         if 'print.html' in uliurl:
                             if uliurl not in invoice_links:
-                                # print('+1')
                                 invoice_links.append(uliurl)
                         elif 'order-details' in uliurl:
                             if uliurl not in order_detail_links:
@@ -187,6 +209,7 @@ class pyAMZON():
         #name links and category list    
         nlc_list = []
 
+        self.log.info('collecting name,links, and category')
         for index,odl in enumerate(order_detail_links):
             print(bar(index+1,len(order_detail_links)),end='\r')
             self.b.get(odl)
@@ -216,6 +239,7 @@ class pyAMZON():
 
         # print(*nlc_list,sep='\n')
 
+        self.log.info('collecting item list')
         item_list = []
         for index,i in enumerate(invoice_links):
             print(bar(index+1,len(invoice_links)),end='\r')
@@ -247,6 +271,7 @@ class pyAMZON():
         outputfile = os.path.join(self.DIR,'results_{0}.csv'.format(self.year))
         pd.DataFrame(item_list).to_csv(outputfile,index=False)
         print('saved: ', outputfile)
+        self.log.info(f' saved: {outputfile}')
 
         self.b.quit()
 
