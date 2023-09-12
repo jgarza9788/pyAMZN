@@ -6,7 +6,7 @@ from logging import Logger
 from logging.handlers import RotatingFileHandler
 import pandas as pd
 from datetime  import datetime
-import selenium.common.exceptions as seleniumex
+import selenium.common.exceptions as seleniume
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
@@ -303,7 +303,7 @@ class pyAMZON():
             chrome_options.add_argument("--headless")  # Run Chrome in headless mode
 
         service = Service(executable_path=os.path.join(self.DIR,'chromedriver.exe'))
-        return webdriver.Chrome(service =service,options=chrome_options)
+        return webdriver.Chrome(service = service,options=chrome_options)
 
     def load(self, filepath):
         with open(filepath,'r') as file:
