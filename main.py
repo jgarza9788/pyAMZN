@@ -6,7 +6,7 @@ from logging import Logger
 from logging.handlers import RotatingFileHandler
 import pandas as pd
 from datetime  import datetime
-import selenium.common.exceptions as seleniume
+import selenium.common.exceptions as selenium
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
