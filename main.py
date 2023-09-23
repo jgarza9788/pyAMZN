@@ -1,19 +1,26 @@
-import sys
-import os, re, time
-import json5 as json
-import logging 
-from logging import Logger
-from logging.handlers import RotatingFileHandler
-import pandas as pd
-from datetime  import datetime
-import selenium.common.exceptions as selenium
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.chrome.options import Options
 
-from bs4 import BeautifulSoup
+try:
+    import sys
+    import os, re, time
+    import json5 as json
+    import logging 
+    from logging import Logger
+    from logging.handlers import RotatingFileHandler
+    import pandas as pd
+    from datetime  import datetime
+    import selenium.common.exceptions as selenium
+    from selenium import webdriver
+    from selenium.webdriver.chrome.service import Service
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.common.keys import Keys
+    from selenium.webdriver.chrome.options import Options
+    from bs4 import BeautifulSoup
+except Exception as e:
+    print(e)
+    print("try running 'pip install -r requirements.txt', to install required libraries")
+    quit()
+
+
 
 def ask(prompt, datatype):
     '''
@@ -65,7 +72,7 @@ def ask(prompt, datatype):
 
 def bar(num,denom,length=50,fillchar='#',emptychar=' '):
     fillnum = ((int)( (num/denom) * length))
-    return '[' + ( fillnum * fillchar ).ljust(length,emptychar)  + ']'
+    return '[' + ( fillnum * fillchar ).ljust(length,emptychar)  + ']' + f" {(num/denom)*100.0:.2f}%     " 
 
 class pyAMZON():
 
