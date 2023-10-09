@@ -218,7 +218,7 @@ class pyAMZON():
 
         self.log.info('collecting name,links, and category')
         for index,odl in enumerate(order_detail_links):
-            print(bar(index+1,len(order_detail_links)),end='\r')
+            print(bar(index+1,len(order_detail_links)),'1 of 3',end='\r')
             self.b.get(odl)
             items = self.b.find_elements(By.CLASS_NAME,'yohtmlc-item')
             for i in items:
@@ -232,9 +232,11 @@ class pyAMZON():
                         'link': link
                     }
                 )
+
+        print()
         
         for index,nlc in enumerate(nlc_list):
-            print(bar(index+1,len(nlc_list)),end='\r')
+            print(bar(index+1,len(nlc_list)),'2 of 3',end='\r')
             try:
                 self.b.get(nlc['link'])
                 bc = self.b.find_element(By.ID,'wayfinding-breadcrumbs_feature_div')
@@ -244,12 +246,12 @@ class pyAMZON():
                 pass
             
 
-        # print(*nlc_list,sep='\n')
+        print()
 
         self.log.info('collecting item list')
         item_list = []
         for index,i in enumerate(invoice_links):
-            print(bar(index+1,len(invoice_links)),end='\r')
+            print(bar(index+1,len(invoice_links)),'3 of 3',end='\r')
             self.b.get(i)
             body = self.b.find_element(By.TAG_NAME,'body')
 
@@ -273,7 +275,8 @@ class pyAMZON():
                 except:
                     pass
 
-        # print(*item_list,sep='\n')
+        print('')
+        
 
         outputfile = os.path.join(self.DIR,'results_{0}.csv'.format(self.year))
         pd.DataFrame(item_list).to_csv(outputfile,index=False)
