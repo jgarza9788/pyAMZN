@@ -67,7 +67,3 @@ Here are some planned improvements for the project:
 - [ ] Develop a user interface (UI) for easier interaction (low priority).
 
 
-# use this to get the webdriver ... change the version number
-```
-npx @puppeteer/browsers install chromedriver@116.0.5793.0
-```
