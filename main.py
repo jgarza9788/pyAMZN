@@ -1,3 +1,9 @@
+try:
+    import os
+    activate_cmd = f'".\\env\\Scripts\\activate"'
+    os.system(activate_cmd)
+except:
+    print("unable to use environment")
 
 try:
     import sys
@@ -138,6 +144,8 @@ class pyAMZON():
         except Exception as ex:
             print(ex)
             self.log.error(ex)
+
+
 
         captcha = False
         try: 
