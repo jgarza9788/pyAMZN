@@ -16,7 +16,7 @@ Before getting started, make sure you have the following:
 
 - Python 3.0 or later installed. If you need help with the installation, you can search "How to install Python" on Google or ask for assistance from ChatGPT or Bard.
 - Google Chrome web browser.
-- Selenium Chrome Driver that matches your version of Chrome. You can download it from [here](https://chromedriver.chromium.org/downloads). (Note: There's already a driver file in the root directory, but it might not match your Chrome version.)
+- Selenium Chrome Driver that matches your version of Chrome. ~~You can download it from [here](https://chromedriver.chromium.org/downloads). (Note: There's already a driver file in the root directory, but it might not match your Chrome version.)~~ `npx @puppeteer/browsers install chromedriver --platform win64` and update the folder path in the code
 - An Amazon account.
 
 ## Setup and Execution

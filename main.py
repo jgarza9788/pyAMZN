@@ -320,7 +320,8 @@ class pyAMZON():
         if visible == False:
             chrome_options.add_argument("--headless")  # Run Chrome in headless mode
 
-        service = Service(executable_path=os.path.join(self.DIR,'chromedriver.exe'))
+        # service = Service(executable_path=os.path.join(self.DIR,'chromedriver.exe'))
+        service = Service(executable_path=os.path.join(self.DIR,'chromedriver\win64-120.0.6099.109\chromedriver-win64\chromedriver.exe'))
         return webdriver.Chrome(service = service,options=chrome_options)
 
     def load(self, filepath):
