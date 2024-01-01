@@ -266,7 +266,7 @@ class pyAMZON():
             self.b.get(i)
             body = self.b.find_element(By.TAG_NAME,'body')
 
-            order_date = self.b.find_element(By.XPATH,'/html/body/table/tbody/tr/td/table[1]/tbody/tr[1]/td/').text.strip()
+            order_date = self.b.find_element(By.XPATH,'/html/body/table/tbody/tr/td/table[1]/tbody/tr[1]/td').text.strip()
             order_date = order_date.replace('Order Placed: ','')
             order_date = datetime.strptime(order_date, "%B %d, %Y").strftime("%Y%m%d")
 
