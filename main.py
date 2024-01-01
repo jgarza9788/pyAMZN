@@ -82,7 +82,7 @@ def bar(num,denom,length=50,fillchar='#',emptychar=' '):
 
 class pyAMZON():
 
-    def __init__(self,mute=False,invisible=True):
+    def __init__(self,mute=False,invisible=True,run=True):
         self.DIR = os.path.dirname(os.path.realpath(__file__))
         self.passwords = self.load(os.path.join(self.DIR,'passwords.json'))
 
@@ -104,6 +104,9 @@ class pyAMZON():
         self.log.info('started script')
 
         print("This will obtain a list of all your Amazon purchases and save it as a csv.")
+
+        if run == False:
+            return
 
         while True:
             self.year = ask("what year should we get?",int)
@@ -263,12 +266,17 @@ class pyAMZON():
             self.b.get(i)
             body = self.b.find_element(By.TAG_NAME,'body')
 
+            order_date = self.b.find_element(By.XPATH,'/html/body/table/tbody/tr/td/table[1]/tbody/tr[1]/td/').text.strip()
+            order_date = order_date.replace('Order Placed: ','')
+            order_date = datetime.strptime(order_date, "%B %d, %Y").strftime("%Y%m%d")
+
             # for t in tables:
             soup = BeautifulSoup(body.get_attribute("innerHTML"), 'html.parser')
             rows = soup.find_all('tr')
             for row in rows:
                 try:
                     tds = row.find_all('td')
+                    
                     if len(tds) == 2:
                         item_name = tds[0].find('i').text.strip()
                         price = tds[1].text.strip()
@@ -279,7 +287,7 @@ class pyAMZON():
                             if nlc['name'] == item_name:
                                 category = nlc['category']
 
-                        item_list.append({'invoice': i,'name': item_name, 'category': category, 'price': price})
+                        item_list.append({'invoice': i,'order_date': order_date,'name': item_name, 'category': category, 'price': price})
                 except:
                     pass
 
@@ -336,6 +344,13 @@ class pyAMZON():
 if __name__ == "__main__":
     
     pAZ = pyAMZON()
-    
+
+    # a = pyAMZON(run=False)
+    # b = a.get_browser()
+    # b.get('https://www.amazon.com/gp/css/summary/print.html/ref=ppx_yo_dt_b_invoice_o00?ie=UTF8&orderID=112-9089142-1924229')
+    # time.sleep(10)
+    # # od = b.find_element(By.XPATH,'/html/body/table/tbody/tr/td/table[1]/tbody/tr[1]/td/text()')
+    # od = b.find_element(By.XPATH,'/html/body/table/tbody/tr/td/table[1]/tbody/tr[1]/td')
+    # print(od.text.strip())
 
 
