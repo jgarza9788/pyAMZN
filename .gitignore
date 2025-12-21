@@ -2,3 +2,4 @@ passwords.json
 *.csv
 *log
 /env
+*.xlsx

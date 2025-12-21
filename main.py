@@ -103,7 +103,7 @@ class pyAMZON:
 
             
             # Navigate to order history
-            order_url = f'https://www.amazon.com/gp/your-account/order-history?orderFilter=year-{self.year}'
+            order_url = f'https://www.amazon.com/your-orders/orders?timeFilter=year-{self.year}'
             page.goto(order_url)
 
             # Wait for orders to load
@@ -115,11 +115,12 @@ class pyAMZON:
             while True:
                 self.log.info('Collecting order links')
 
-                odl = page.query_selector_all('.yohtmlc-order-details-link')
+                odl = page.query_selector_all('.a-link-normal')
                 for link in odl:
                     href = link.get_attribute('href')
-                    invoice_links.append(href)
-                    self.log.info(f"{len(invoice_links)=}")
+                    if 'order-details?orderID=' in href:
+                        invoice_links.append(href)
+                        self.log.info(f"{len(invoice_links)=}")
 
                 # orders = page.locator('.order-info')
 
@@ -147,8 +148,8 @@ class pyAMZON:
             items = []
             for link in invoice_links:
                 self.log.info(f'Processing invoice: {link}')
-                page.goto(f'https://www.amazon.com{link}')
-                page.wait_for_timeout(500)
+                page.goto(f'https://www.amazon.com{link}', wait_until="domcontentloaded", timeout=60000)
+                # page.wait_for_timeout(500)
 
                 # try:
                 #     # //*[@id="pos_view_content"]/table/tbody/tr/td/table/tbody/tr[1]/td/b
@@ -226,9 +227,10 @@ class pyAMZON:
                         title = title_el.get_text(strip=True) if title_el else None
 
 
-                        page2.goto(f'https://www.amazon.com{title_el.get("href")}')
+                        page2.goto(f'https://www.amazon.com{title_el.get("href")}'
+                                   , wait_until="domcontentloaded", timeout=60000)
                         # page2.wait_for_selector("#wayfinding-breadcrumbs_feature_div")
-                        page2.wait_for_timeout(100)
+                        # page2.wait_for_timeout(100)
                         breadcrumb = "N/A"
                         try:
                             breadcrumb_items = page2.locator("#wayfinding-breadcrumbs_feature_div li a")
@@ -261,7 +263,7 @@ class pyAMZON:
                         }) 
 
                 except Exception as e:
-                    self.log.info(e)
+                    self.log.error(e)
 
 
             output_file = os.path.join(self.DIR, f'results_{self.year}.csv')
